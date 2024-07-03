@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Todo</string>
+    <string name="add_todo">Add Todo</string>
+    <string name="new_todo">New Todo</string>
+    <string name="clear_text">Clear text</string>
+    <string name="error_empty_todo">Please enter a todo item</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+</resources>
