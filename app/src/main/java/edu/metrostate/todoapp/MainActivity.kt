@@ -22,6 +22,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.launch
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 
 // Data class representing a Todo item
 data class TodoItem(val text: String, var isCompleted: Boolean)
@@ -49,123 +51,118 @@ fun TodoApp() {
     val (showError, setShowError) = remember { mutableStateOf(false) }
     // Focus manager to handle input focus
     val focusManager = LocalFocusManager.current
-    // Scaffold state for bottom sheet handling
-    val scaffoldState = rememberBottomSheetScaffoldState()
-    // Coroutine scope for handling suspend functions
+    // State to track the visibility of the modal bottom sheet
+    var openBottomSheet by rememberSaveable { mutableStateOf(false) }
+    val bottomSheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
 
-    // Bottom sheet scaffold for the UI
-    BottomSheetScaffold(
-        scaffoldState = scaffoldState,
-        sheetContent = {
-            // Content of the bottom sheet
-            BottomSheet(
-                newTodo = newTodo,
-                onNewTodoChange = setNewTodo,
-                onSave = {
-                    if (newTodo.isNotBlank()) {
-                        // Add new todo to the list
-                        todos.add(TodoItem(newTodo, false))
-                        // Reset input and error states
-                        setNewTodo("")
-                        setShowError(false)
-                        // Clear focus
-                        focusManager.clearFocus()
-                        coroutineScope.launch {
-                            try {
-                                // Hide the bottom sheet
-                                scaffoldState.bottomSheetState.hide()
-                            } catch (e: Exception) {
-                                e.printStackTrace()
-                            }
-                        }
-                    } else {
-                        // Show error if input is empty
-                        setShowError(true)
+    Scaffold(
+        topBar = {
+            // Top bar of the app
+            TopAppBar(
+                title = {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.Center
+                    ) {
+                        Text(stringResource(id = R.string.app_name))
                     }
                 },
-                onCancel = {
-                    // Reset input and error states on cancel
-                    setNewTodo("")
-                    setShowError(false)
-                    focusManager.clearFocus()
-                    coroutineScope.launch {
-                        try {
-                            // Hide the bottom sheet
-                            scaffoldState.bottomSheetState.hide()
-                        } catch (e: Exception) {
-                            e.printStackTrace()
-                        }
-                    }
-                },
-                showError = showError
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = Color(0xFFEEFDF6)
+                )
             )
         },
-        sheetPeekHeight = 0.dp,
-        content = { paddingValues ->
-            Scaffold(
-                topBar = {
-// Top bar of the app
-                    TopAppBar(
-                        title = {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.Center
-                            ) {
-                                Text(stringResource(id = R.string.app_name))
-                            }
-                        },
-                        colors = TopAppBarDefaults.topAppBarColors(
-                            containerColor = Color(0xFFEEFDF6)
-                        )
-                    )
-                },
-                floatingActionButton = {
-                    // Floating action button to add new todos
-                    FloatingActionButton(
-                        onClick = {
-                            coroutineScope.launch {
-                                try {
-                                    // Expand the bottom sheet on click
-                                    scaffoldState.bottomSheetState.expand()
-                                } catch (e: Exception) {
-                                    e.printStackTrace()
-                                }
-                            }
-                        },
-                        containerColor = Color(0xFF43e69f)
-                    ) {
-                        Icon(Icons.Default.Add, contentDescription = stringResource(id = R.string.add_todo))
+        floatingActionButton = {
+            // Floating action button to add new todos
+            FloatingActionButton(
+                onClick = {
+                    openBottomSheet = true
+                    coroutineScope.launch {
+                        bottomSheetState.show()
                     }
                 },
-                content = { innerPadding ->
-                    Column(
-                        modifier = Modifier
-                            .padding(innerPadding)
-                            .padding(horizontal = 12.dp)
-                            .background(Color(0xFFEEFDF6))
-                    ) {
-                        Spacer(
-                            modifier = Modifier
-                                .height(30.dp)
-                                .fillMaxWidth()
-                                .background(Color.White)
-                        )
-                        // Iterate through the list of todos and display each
-                        todos.forEachIndexed { index, todo ->
-                            TodoItemRow(
-                                todo = todo,
-                                onToggle = {
-                                    // Toggle the completion status of the todo
-                                    todos[index] = todo.copy(isCompleted = !todo.isCompleted)
-                                }
-                            )
+                containerColor = Color(0xFF43e69f)
+            ) {
+                Icon(Icons.Default.Add, contentDescription = stringResource(id = R.string.add_todo))
+            }
+        },
+        content = { innerPadding ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPadding)
+                    .padding(horizontal = 12.dp)
+                    .background(Color(0xFFEEFDF6))
+            ) {
+                Spacer(
+                    modifier = Modifier
+                        .height(30.dp)
+                        .fillMaxWidth()
+                        .background(Color.White)
+                )
+                // Iterate through the list of todos and display each
+                todos.forEachIndexed { index, todo ->
+                    TodoItemRow(
+                        todo = todo,
+                        onToggle = {
+                            // Toggle the completion status of the todo
+                            todos[index] = todo.copy(isCompleted = !todo.isCompleted)
                         }
-                    }
+                    )
                 }
-            )
+            }
         }
     )
+
+    if (openBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { openBottomSheet = false },
+            sheetState = bottomSheetState,
+            content = {
+                BottomSheet(
+                    newTodo = newTodo,
+                    onNewTodoChange = setNewTodo,
+                    onSave = {
+                        if (newTodo.isNotBlank()) {
+                            // Add new todo to the list
+                            todos.add(TodoItem(newTodo, false))
+                            // Reset input and error states
+                            setNewTodo("")
+                            setShowError(false)
+                            // Clear focus
+                            focusManager.clearFocus()
+                            // Hide the bottom sheet
+                            coroutineScope.launch {
+                                bottomSheetState.hide()
+                            }.invokeOnCompletion {
+                                if (!bottomSheetState.isVisible) {
+                                    openBottomSheet = false
+                                }
+                            }
+                        } else {
+                            // Show error if input is empty
+                            setShowError(true)
+                        }
+                    },
+                    onCancel = {
+                        // Reset input and error states on cancel
+                        setNewTodo("")
+                        setShowError(false)
+                        focusManager.clearFocus()
+                        // Hide the bottom sheet
+                        coroutineScope.launch {
+                            bottomSheetState.hide()
+                        }.invokeOnCompletion {
+                            if (!bottomSheetState.isVisible) {
+                                openBottomSheet = false
+                            }
+                        }
+                    },
+                    showError = showError
+                )
+            }
+        )
+    }
 }
 
 // Composable function to display a single Todo item
@@ -216,7 +213,7 @@ fun BottomSheet(
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp) // Changed spacing to 10.dp
+            verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             // Input field for new todo
             OutlinedTextField(
