@@ -122,9 +122,9 @@ fun TodoApp() {
         ModalBottomSheet(
             onDismissRequest = { openBottomSheet = false },
             sheetState = bottomSheetState,
-            modifier = Modifier.height(screenHeight / 2),
+            modifier = Modifier.height(screenHeight / 2), // Set the height to half the screen
             content = {
-                BottomSheet(
+                BottomSheetContent(
                     newTodo = newTodo,
                     onNewTodoChange = setNewTodo,
                     onSave = {
@@ -201,7 +201,7 @@ fun TodoItemRow(todo: TodoItem, onToggle: () -> Unit) {
 
 // Composable function for the bottom sheet content
 @Composable
-fun BottomSheet(
+fun BottomSheetContent(
     newTodo: String,
     onNewTodoChange: (String) -> Unit,
     onSave: () -> Unit,
@@ -210,14 +210,14 @@ fun BottomSheet(
 ) {
     Surface(
         modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .heightIn(min = 275.dp, max = 700.dp), // Adjusted height to half of 550.dp (min height)
+            .fillMaxWidth(),
         shape = MaterialTheme.shapes.medium,
+
         color = Color(0xfff5f3f9)
     ) {
         Column(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier
+                .padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp)
         ) {
             // Input field for new todo
