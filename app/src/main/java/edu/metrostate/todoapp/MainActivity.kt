@@ -15,6 +15,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
@@ -55,6 +56,9 @@ fun TodoApp() {
     var openBottomSheet by rememberSaveable { mutableStateOf(false) }
     val bottomSheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
 
     Scaffold(
         topBar = {
@@ -118,6 +122,7 @@ fun TodoApp() {
         ModalBottomSheet(
             onDismissRequest = { openBottomSheet = false },
             sheetState = bottomSheetState,
+            modifier = Modifier.height(screenHeight / 2),
             content = {
                 BottomSheet(
                     newTodo = newTodo,
@@ -207,7 +212,7 @@ fun BottomSheet(
         modifier = Modifier
             .fillMaxWidth()
             .padding(16.dp)
-            .heightIn(min = 550.dp, max = 700.dp),
+            .heightIn(min = 275.dp, max = 700.dp), // Adjusted height to half of 550.dp (min height)
         shape = MaterialTheme.shapes.medium,
         color = Color(0xfff5f3f9)
     ) {
