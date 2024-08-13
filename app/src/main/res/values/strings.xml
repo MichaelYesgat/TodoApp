@@ -6,4 +6,37 @@
     <string name="error_empty_todo">Please enter a todo item</string>
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>
+
+    <string name="no_todos_available">No todos available</string>
+    <string name="todo_updated">Todo updated</string>
+    <string name="todo_update_failed">Failed to update todo</string>
+    <string name="logged_out">Logged out</string>
+
+    <string name="email">Email</string>
+    <string name="name">Name</string>
+    <string name="password">Password</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="create_account">Create Account</string>
+    <string name="already_have_account">Already have an account? Log In</string>
+    <string name="error_all_fields_required">All fields are required</string>
+    <string name="error_passwords_do_not_match">Passwords do not match</string>
+    <string name="error_invalid_email">Invalid email</string>
+    <string name="error_password_length">Invalid password length must be more that eight characters</string>
+
+    <string name="log_in">Log In</string>
+    <string name="account_created_successfully">Account created successfully</string>
+    <string name="dont_have_account">Don\'t have an account? Create Account</string>
+    <string name="error_email_password_required">Email and Password are required</string>
+
+    <string name="todo_list">Todo List</string>
+    <string name="login_successful">Login successful</string>
+    <string name="delete_todo">Delete Todo</string>
+
+    <string name="login_failed">Login failed</string>
+    <string name="logout">Logout</string>
+
+    <string name="permission">Permission required for the app to function properly</string>
+
+
+
 </resources>
