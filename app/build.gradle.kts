@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "edu.metrostate.todoapp"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "edu.metrostate.todoapp"
@@ -49,6 +49,9 @@ android {
     }
 }
 
+tasks.withType<Test> {
+    useJUnitPlatform()
+}
 
 
 dependencies {
@@ -61,7 +64,6 @@ dependencies {
     implementation(libs.androidx.lifecycle.viewmodel)
     implementation(libs.androidx.lifecycle.viewmodel.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-
 
     // Compose libraries
     implementation(libs.androidx.activity.compose)
@@ -96,6 +98,12 @@ dependencies {
 
     // Testing libraries
     testImplementation(libs.junit)
+    testImplementation(libs.mockk.android)
+    testImplementation(libs.mockk.agent.android)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.androidx.arch.core)
+    testRuntimeOnly(libs.junit.engine)
+
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
